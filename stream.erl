@@ -17,7 +17,8 @@ start() ->
 	{stream, Pid}.
 
 cast(Msg, {stream, Pid}) ->
-	Pid ! Msg.
+	Pid ! Msg,
+	ok.
 
 subscribe(Ob, {stream, Pid}) ->
 	Pid ! {subscribe,  Ob},
@@ -54,7 +55,7 @@ select_many(Inflator,  Stream) ->
 				end)
 		end),
 	SM.	
-%S = stream.start(), 
+%S = stream:start(), 
 %S:subscribe(fun(Msg) -> io:format("Msg ~p~n", [Msg]) end),
 %S:cast("hello")
 
