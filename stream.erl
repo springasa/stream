@@ -7,6 +7,10 @@ loop(OBS) ->
 	receive
 		{subscribe,  Ob}  ->
 			loop([Ob | OBS]);
+		{unsubscribe, Ob} ->
+			loop(lists:delete(Ob, OBS));
+		stop -> 
+			stop;
 		Msg ->
 			[Ob(Msg) || Ob <- OBS],
 			loop(OBS)
@@ -19,9 +23,15 @@ start() ->
 cast(Msg, {stream, Pid}) ->
 	Pid ! Msg,
 	ok.
-
+stop({stream, Pid}) ->
+	Pid ! stop,
+	ok.
 subscribe(Ob, {stream, Pid}) ->
 	Pid ! {subscribe,  Ob},
+	ok.
+
+unsubscribe(Ob, {stream, Pid}) ->
+	Pid ! {unsubscribe,  Ob},
 	ok.
 
 where(Pred,  Stream) ->
@@ -55,6 +65,8 @@ select_many(Inflator,  Stream) ->
 				end)
 		end),
 	SM.	
+%-spec until(stream(), stream()) -> stream().
+
 %S = stream:start(), 
 %S:subscribe(fun(Msg) -> io:format("Msg ~p~n", [Msg]) end),
 %S:cast("hello")
@@ -64,6 +76,20 @@ select_many(Inflator,  Stream) ->
 %   :subscribe(fun(Msg) -> io:format("Msg ~p~n", [Msg]) end),
 % S:cast("Hello"),
 % S:cast(1).
+
+until(ES, S) ->
+	US = stream:start(),
+	Ob1 = fun(E) -> US:cast(E) end,
+	Ob2 = fun(_) -> 
+		S:unsubscribe(Ob1),
+		US:stop() 
+	           end,
+	S:subscribe(Ob1),
+	ES:subscribe(Ob2),	
+	US.
+	%ES:unsubscribe(Ob2),
+
+%until(MouseMove, MouseUp):subscribe(print);
 
 test2() ->
 	S = stream:start(),
@@ -89,3 +115,9 @@ test_3() ->
 %	{MouseDown, MouseMove} = stream:test_3(),	      
 %	MouseDown:cast(down),
 %	MouseMove:cast({10,10}).
+
+test_4() ->
+	MouseDown = mouse_down_stream(),
+	MouseMove = mouse_move_stream(),
+	MouseUp = mouse_down_stream(),
+	until(MouseMove, MouseUp).
