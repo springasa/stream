@@ -7,10 +7,10 @@ start() ->
 	DSServer = dict_suggest:start(),
 
 	(((((ECS:where(fun(Word) -> string:strip(Word) =/= "" end))
-		:dict_until_changed())
+		:distinct_until_changed())
 		:throttle(200))
 		:select(fun(D) -> DSServer:completions(D) end))
-	              :swith())
+	              :switch())
 	              :subscribe(fun(Words) ->
 	              	GUI:set_words(Words) end).
 entry_change_stream(GUI) ->

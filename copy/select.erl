@@ -11,9 +11,9 @@ start(ES, S) ->
 	stream:start(?MODULE, [ES, S]).
 init([ES, S]) ->
 	Owner = self(),
-	Stream:subscribe(
+	S:subscribe(
 		fun(D) ->
-			Owner ! {notify_data,PF(D)}
+			Owner ! {notify_data,ES(D)}
 		end),
 	{ok, []}.
 

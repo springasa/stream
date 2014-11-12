@@ -64,6 +64,10 @@ switch(SOS) ->
 throttle(Interval, S) ->
 	throttle:start(Interval, S).
 
+-spec distinct_until_changed(stream()) -> stream().
+distinct_until_changed(S) ->
+	distinct_until_changed:start(S).
+
 loop(Module, State, OBS) ->
 	receive
 		{subscribe, Ob} ->

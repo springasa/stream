@@ -10,7 +10,7 @@ start(Interval, S) ->
 
 init([Interval, S]) ->
 	Owner = self(),
-	S:subscibe(
+	S:subscribe(
 		fun(E) ->
 			Owner ! {notify_data, E}
 		end),
