@@ -27,6 +27,8 @@ loop() ->
 
 get_suggestions(Word) ->
 	case Word of 
-		"t" -> ["tea"];
+		"t" -> ["tea", "the"];
+		"th" -> ["the", "there"];
+		"the" -> ["there"];
 		Unknown -> [Unknown]
 	end.

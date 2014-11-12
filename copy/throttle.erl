@@ -16,7 +16,7 @@ init([Interval, S]) ->
 		end),
 	{ok, [no_timer, Interval, none]}.
 
-handle_message({notify_data, E}, [no_timer, Interval, _]=_State) ->
+handle_message({notify_data, E},  {ok, [no_timer, Interval, _]}=_State) ->
 	{ok, Tref} = timer:send_after(Interval, timeout),
 	{continue, [Tref, Interval, E]};
 	

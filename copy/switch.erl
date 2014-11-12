@@ -25,7 +25,7 @@ handle_message({new_stream, S}, State) ->
 			Owner ! {notify_data, E}
 		end),
 	case State of
-		[] -> void;
+		{ok, []} -> void;
 		[PreSub] ->
 			PreSub:unsubscribe()
 	end,
